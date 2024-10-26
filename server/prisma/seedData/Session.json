@@ -1,0 +1,5 @@
+[
+    { "idSession": 1, "NomSession": "Morning Session", "DateDebut": "2024-01-01T08:00:00Z", "pourc_frais_depot": 0.1, "pourc_frais_vente": 0.15, "Statut": true },
+    { "idSession": 2, "NomSession": "Afternoon Session", "DateDebut": "2024-01-01T13:00:00Z", "pourc_frais_depot": 0.1, "pourc_frais_vente": 0.15, "Statut": false }
+  ]
+  

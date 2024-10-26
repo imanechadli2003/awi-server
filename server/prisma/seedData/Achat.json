@@ -1,0 +1,5 @@
+[
+    { "AchatID": 1, "Total_paye": 100.0, "id_session": 1, "DateAchat": "2024-01-03T15:00:00Z", "comission_vente_total": 10.0, "ID_Acheteur": 1 },
+    { "AchatID": 2, "Total_paye": 150.0, "id_session": 2, "DateAchat": "2024-01-03T16:00:00Z", "comission_vente_total": 15.0, "ID_Acheteur": 2 }
+  ]
+  

@@ -1,0 +1,5 @@
+[
+    { "ID_depot": 1, "VendeurID": 1, "date_depot": "2024-01-02T10:00:00Z", "id_session": 1, "comission_depot_total": 5.0 },
+    { "ID_depot": 2, "VendeurID": 2, "date_depot": "2024-01-02T14:00:00Z", "id_session": 2, "comission_depot_total": 10.0 }
+  ]
+  

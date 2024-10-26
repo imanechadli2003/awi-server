@@ -1,0 +1,5 @@
+[
+    { "UtilisateurID": 1, "Nom": "Brown", "Prenom": "Charlie", "Email": "charlie.brown@example.com", "MdP": "password123", "Role": "Manager" },
+    { "UtilisateurID": 2, "Nom": "Adams", "Prenom": "Jessica", "Email": "jessica.adams@example.com", "MdP": "password456", "Role": "Admin" }
+  ]
+  

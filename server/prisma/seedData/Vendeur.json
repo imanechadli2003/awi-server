@@ -1,0 +1,5 @@
+[
+    { "VendeurID": 1, "Nom": "Taylor", "Email": "taylor@example.com", "Telephone": "5551234567", "Balance": 150.0 },
+    { "VendeurID": 2, "Nom": "Jordan", "Email": "jordan@example.com", "Telephone": "5557654321", "Balance": 250.0 }
+  ]
+  

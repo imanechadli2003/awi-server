@@ -1,0 +1,6 @@
+[
+    { "JeuRef_id": 1, "Nom": "Chess", "Editeur": "Classic Games" },
+    { "JeuRef_id": 2, "Nom": "Monopoly", "Editeur": "Hasbro" },
+    { "JeuRef_id": 3, "Nom": "Catan", "Editeur": "Catan Studio" }
+  ]
+  
