@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 
 //  Créer une nouvelle marque de jeu
 export const createJeuxMarque = async (req: Request, res: Response): Promise<void> => {
-  const { JeuRef_id, Nom, Editeur } = req.body;
+  const { JeuRef_id, Nom, Editeur,Description} = req.body;
 
   try {
     const newJeuxMarque = await prisma.jeuxMarque.create({
@@ -15,6 +15,7 @@ export const createJeuxMarque = async (req: Request, res: Response): Promise<voi
         JeuRef_id, 
         Nom,
         Editeur,
+        Description,
       },
     });
     res.status(201).json(newJeuxMarque);

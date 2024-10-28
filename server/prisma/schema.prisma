@@ -13,6 +13,7 @@ model JeuxMarque {
   JeuRef_id Int     @id
   Nom       String
   Editeur   String
+  Description String
   jeuxDepot Jeu[]   @relation("JeuxMarque_Jeu")
 }
 
