@@ -17,11 +17,12 @@ model JeuxMarque {
 }
 
 model Jeu {
-  JeuID         Int         @id
+  JeuID         Int         @id @default(autoincrement())
   JeuRef_id     Int
   depot_ID      Int
   prix_unitaire Float
   mise_en_vente Boolean
+  quantite_disponible Int  
   depot         Depot       @relation(fields: [depot_ID], references: [ID_depot])
   jeuxMarque    JeuxMarque? @relation("JeuxMarque_Jeu", fields: [JeuRef_id], references: [JeuRef_id])
   achat_jeux    AchatJeu[]
@@ -29,7 +30,7 @@ model Jeu {
 }
 
 model Depot {
-  ID_depot              Int        @id
+  ID_depot              Int        @id @default(autoincrement())
   VendeurID             Int
   date_depot            DateTime
   id_session            Int
@@ -41,11 +42,10 @@ model Depot {
 }
 
 model Vendeur {
-  VendeurID Int     @id
+  VendeurID Int     @id @default(autoincrement())
   Nom       String
   Email     String
   Telephone String
-  Balance   Float
   depots    Depot[]
 
   BilanVendeurSession BilanVendeurSession[]
@@ -63,16 +63,17 @@ model DepotJeu {
 }
 
 model Achat {
-  AchatID               Int         @id
-  Total_paye            Float
-  id_session            Int
-  DateAchat             DateTime
-  comission_vente_total Float
+  AchatID               Int         @id @default(autoincrement())
+  Total_paye            Float       // Montant total payé pour l'achat
+  id_session            Int         // Référence à la session active
+  DateAchat             DateTime    // Date et heure de l'achat
+  comission_vente_total Float       // Total des commissions sur les jeux achetés
   session               Session     @relation(fields: [id_session], references: [idSession])
-  acheteur              Acheteur    @relation(fields: [ID_Acheteur], references: [AcheteurID])
-  ID_Acheteur           Int
-  achat_jeux            AchatJeu[]
+  achat_jeux            AchatJeu[]  // Relation avec les jeux achetés
+
+  @@index([id_session]) // Index pour améliorer la recherche des achats par session
 }
+
 
 model AchatJeu {
   AchatID           Int
@@ -85,25 +86,9 @@ model AchatJeu {
   @@id([AchatID, JeuID])
 }
 
-model Acheteur {
-  AcheteurID Int      @id
-  Nom        String
-  Prenom     String
-  Email      String
-  Telephone  String
-  Adresse    String
-  achats     Achat[]
-}
-
-model Facture {
-  id_facture Int   @id
-  id_session Int
-  ID_Acheteur Int
-  session    Session @relation(fields: [id_session], references: [idSession])
-}
 
 model Session {
-  idSession      Int      @id
+  idSession      Int      @id @default(autoincrement())
   NomSession     String
   DateDebut      DateTime
   DateFin        DateTime?
@@ -111,16 +96,15 @@ model Session {
   pourc_frais_vente Float
   Statut         Boolean
   achats         Achat[]
-  factures       Facture[]
   depots         Depot[]
   bilanVendeurSessions BilanVendeurSession[]
 }
 
 model Utilisateur {
-  UtilisateurID Int      @id
+  UtilisateurID Int      @id @default(autoincrement())
   Nom           String
   Prenom        String
-  Email         String
+  Email         String   @unique
   MdP           String
   Role          Role
 }
