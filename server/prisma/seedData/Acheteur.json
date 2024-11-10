@@ -1,5 +1,0 @@
-[
-    { "AcheteurID": 1, "Nom": "Smith", "Prenom": "John", "Email": "john.smith@example.com", "Telephone": "123456789", "Adresse": "123 Main St" },
-    { "AcheteurID": 2, "Nom": "Doe", "Prenom": "Jane", "Email": "jane.doe@example.com", "Telephone": "987654321", "Adresse": "456 Elm St" }
-  ]
-  

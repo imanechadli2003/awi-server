@@ -83,18 +83,5 @@ export class VendeurController {
     }
   }
 
-  // Supprimer un vendeur par ID
-  static async deleteVendeur(req: Request, res: Response): Promise<void> {
-    const { id } = req.params;
-
-    try {
-      await prisma.vendeur.delete({
-        where: { VendeurID: Number(id) },
-      });
-      res.status(204).send();  // Réponse sans contenu
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Erreur lors de la suppression du vendeur.' });
-    }
-  }
+  
 }

@@ -1,5 +1,18 @@
 [
-    { "JeuID": 1, "JeuRef_id": 1, "depot_ID": 1, "prix_unitaire": 20.0, "mise_en_vente": true },
-    { "JeuID": 2, "JeuRef_id": 2, "depot_ID": 2, "prix_unitaire": 30.0, "mise_en_vente": false }
-  ]
-  
+  {
+    "JeuID": 1,
+    "JeuRef_id": 1,
+    "depot_ID": 1,
+    "prix_unitaire": 49.99,
+    "mise_en_vente": true,
+    "quantite_disponible": 100
+  },
+  {
+    "JeuID": 2,
+    "JeuRef_id": 2,
+    "depot_ID": 2,
+    "prix_unitaire": 29.99,
+    "mise_en_vente": false,
+    "quantite_disponible": 50
+  }
+]

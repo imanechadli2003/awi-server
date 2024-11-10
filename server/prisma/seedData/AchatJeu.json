@@ -1,5 +1,8 @@
 [
-    { "AchatID": 1, "JeuID": 1, "comission_vente": 2.0, "quantite_achete": 5 },
-    { "AchatID": 2, "JeuID": 2, "comission_vente": 1.5, "quantite_achete": 3 }
-  ]
-  
+  {
+    "AchatID": 1,
+    "JeuID": 1,
+    "comission_vente": 1.0,
+    "quantite_achete": 2
+  }
+]

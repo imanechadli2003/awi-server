@@ -33,12 +33,13 @@ async function main() {
     "Depot.json",
     "Jeu.json",
     "DepotJeu.json",
-    "Acheteur.json",
     "Achat.json",
     "AchatJeu.json",
-    "Facture.json",
     "BilanVendeurSession.json"
   ];
+  
+  
+  
 
   await deleteAllData(orderedFileNames);
 
