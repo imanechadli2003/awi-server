@@ -32,7 +32,7 @@ const AchatController = {
                 return res.status(400).json({ message: `Quantité achetée pour le jeu ${jeu.JeuID} dépasse la quantité disponible.` });
             }
 
-            // Calculer la commission pour ce jeu
+            // Calculer la commission pour ce jeu ce qu'on veut 
             const comissionVente = (jeu.prix_unitaire ) * (sessionActive.pourc_frais_vente / 100);
             totalComissionVente += comissionVente* achatJeu.quantite_achete;
 

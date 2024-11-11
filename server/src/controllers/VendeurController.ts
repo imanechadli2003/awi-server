@@ -85,3 +85,6 @@ export class VendeurController {
 
   
 }
+//on a besoin de creer un vendeur,retourner tous les vendeurs,recuperer un vendeur a partir de son ID
+//et si on veut update les informations d'un vendeur on peut.
+
