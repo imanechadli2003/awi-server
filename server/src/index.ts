@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
-/* ROUTES */
+/* EXEMPLE DE ROUTES */
 app.get("/hello",(req,res)=>{
     res.send("hello world");
 });
