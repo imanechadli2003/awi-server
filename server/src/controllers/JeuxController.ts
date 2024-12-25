@@ -84,6 +84,7 @@ export const mettreEnVente = async (req: Request, res: Response): Promise<void> 
 };
 
 
+
 // Supprimer un jeu
 export const deleteJeu = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
@@ -97,6 +98,8 @@ export const deleteJeu = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ error: "Erreur lors de la suppression du jeu." });
   }
 };
+
+
 
 
 //Voir la liste des jeux,détail d'un jeu particulier,mettre en vente,ou le supprimer de la base de données sont des trucs 

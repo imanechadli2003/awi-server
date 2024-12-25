@@ -48,6 +48,7 @@ export class AchatController {
       res.status(500).json({ message: 'Erreur lors de la récupération de l\'achat.' });
     }
   }
+  
 
 
 }

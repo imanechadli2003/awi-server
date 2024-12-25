@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 export class VendeurController {
   // Créer un nouveau vendeur
   static async createVendeur(req: Request, res: Response): Promise<void> {
-    const { Nom, Email, Telephone, Balance } = req.body;
+    const { Nom, Email, Telephone } = req.body;
 
     try {
       const newVendeur = await prisma.vendeur.create({
@@ -83,8 +83,50 @@ export class VendeurController {
     }
   }
 
+  static async getTopVendeurs(req: Request, res: Response) {
+    try {
+      // Étape 1 : Agréger les totaux de commissions pour chaque vendeur
+      const vendeursAvecTotal = await prisma.depot.groupBy({
+        by: ["VendeurID"], // Grouper par ID de vendeur
+        _sum: {
+          comission_depot_total: true, // Somme des commissions
+        },
+        orderBy: {
+          _sum: {
+            comission_depot_total: "desc", // Trier par ordre décroissant
+          },
+        },
+        take: 5, // Limiter aux 5 premiers vendeurs
+      });
   
+      // Étape 2 : Récupérer les détails des vendeurs correspondants
+      const topVendeurs = await prisma.vendeur.findMany({
+        where: {
+          VendeurID: {
+            in: vendeursAvecTotal.map((v) => v.VendeurID),
+          },
+        },
+        include: {
+          depots: true, // Inclure les dépôts si nécessaire
+        },
+      });
+  
+      // Ajouter les totaux calculés aux vendeurs
+      const result = topVendeurs.map((vendeur) => {
+        const total = vendeursAvecTotal.find((v) => v.VendeurID === vendeur.VendeurID);
+        return {
+          ...vendeur,
+          totalCommissions: total?._sum.comission_depot_total || 0,
+        };
+      });
+  
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des meilleurs vendeurs : ", error);
+      res.status(500).json({ message: "Erreur interne du serveur." });
+    }
+  }
 }
 //on a besoin de creer un vendeur,retourner tous les vendeurs,recuperer un vendeur a partir de son ID
 //et si on veut update les informations d'un vendeur on peut.
-
+ 
