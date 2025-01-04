@@ -5,7 +5,7 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import dashboardRoutes from './routes/dashboardRoutes';
-
+import depotRoutes from './routes/depotRoutes'
 
 /* CONFIGURATIONS */
 dotenv.config();
@@ -17,10 +17,11 @@ app.use(morgan("common"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(cors());
-
+app.use(bodyParser.json());
 
 /* EXEMPLE DE ROUTES */
 app.use("/dashboard",dashboardRoutes);
+app.use("/stocks",depotRoutes);
 
 
 /* LANCEMENT DU SERVEUR */

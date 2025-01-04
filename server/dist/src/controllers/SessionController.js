@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.closeSession = exports.createSession = void 0;
+exports.getActiveSession = exports.closeSession = exports.createSession = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 // Contrôleur pour créer une session
@@ -72,3 +72,23 @@ const closeSession = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.closeSession = closeSession;
+// Contrôleur pour récupérer la session active
+const getActiveSession = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // Récupérer la session active
+        const activeSession = yield prisma.session.findFirst({
+            where: {
+                Statut: true, // Vérifie si une session est active
+            },
+        });
+        if (!activeSession) {
+            return res.status(404).json({ error: "Aucune session active." });
+        }
+        return res.status(200).json(activeSession); // Retourner la session active
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Erreur lors de la récupération de la session active." });
+    }
+});
+exports.getActiveSession = getActiveSession;

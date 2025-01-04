@@ -67,5 +67,26 @@ export const closeSession = async (req: Request, res: Response): Promise<Respons
     return res.status(500).json({ error: "Erreur lors de la fermeture de la session." }); // Change void to Response
   }
 };
+// Contrôleur pour récupérer la session active
+export const getActiveSession = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    // Récupérer la session active
+    const activeSession = await prisma.session.findFirst({
+      where: {
+        Statut: true, // Vérifie si une session est active
+      },
+    });
+
+    if (!activeSession) {
+      return res.status(404).json({ error: "Aucune session active." });
+    }
+
+    return res.status(200).json(activeSession); // Retourner la session active
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Erreur lors de la récupération de la session active." });
+  }
+};
+
 
 
