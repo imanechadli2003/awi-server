@@ -13,6 +13,9 @@ exports.AchatController = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 class AchatController {
+    static createAchat(arg0, createAchat) {
+        throw new Error('Method not implemented.');
+    }
     // Récupérer tous les achats
     static getAllAchats(req, res) {
         return __awaiter(this, void 0, void 0, function* () {

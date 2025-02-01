@@ -9,20 +9,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getActiveSession = exports.closeSession = exports.createSession = void 0;
+exports.getAllSessions = exports.getActiveSession = exports.closeSession = exports.createSession = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 // Contrôleur pour créer une session
-const createSession = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const createSession = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Vérifier s'il y a une session active
         const activeSession = yield prisma.session.findFirst({
-            where: {
-                Statut: true, // Vérifie si une session est active
-            },
+            where: { Statut: true },
         });
         if (activeSession) {
-            return res.status(400).json({ error: "Une session est déjà active." });
+            res.status(400).json({ error: "Une session est déjà active." });
+            return;
         }
         const { NomSession, pourc_frais_depot, pourc_frais_vente } = req.body;
         const newSession = yield prisma.session.create({
@@ -31,64 +30,70 @@ const createSession = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 DateDebut: new Date(),
                 pourc_frais_depot,
                 pourc_frais_vente,
-                Statut: true, // Marque la session comme active
+                Statut: true,
             },
         });
-        return res.status(201).json(newSession); // Change void to Response
+        res.status(201).json(newSession);
     }
     catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: "Erreur lors de la création de la session." }); // Change void to Response
+        console.error("Erreur lors de la création de la session :", error);
+        next(error); // Passer l'erreur au middleware de gestion des erreurs
     }
 });
 exports.createSession = createSession;
 // Contrôleur pour fermer une session
-const closeSession = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const closeSession = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // Vérifier s'il y a une session active
         const activeSession = yield prisma.session.findFirst({
-            where: {
-                Statut: true, // Vérifie si une session est active
-            },
+            where: { Statut: true },
         });
         if (!activeSession) {
-            return res.status(400).json({ error: "Aucune session active à fermer." });
+            res.status(400).json({ error: "Aucune session active à fermer." });
+            return;
         }
-        // Mettre à jour la session active pour la fermer
         const closedSession = yield prisma.session.update({
-            where: {
-                idSession: activeSession.idSession,
-            },
+            where: { idSession: activeSession.idSession },
             data: {
-                Statut: false, // Change le statut à false
-                DateFin: new Date(), // Enregistre la date de fin
+                Statut: false,
+                DateFin: new Date(),
             },
         });
-        return res.status(200).json(closedSession); // Change void to Response
+        res.status(200).json(closedSession);
     }
     catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: "Erreur lors de la fermeture de la session." }); // Change void to Response
+        console.error("Erreur lors de la fermeture de la session :", error);
+        next(error);
     }
 });
 exports.closeSession = closeSession;
 // Contrôleur pour récupérer la session active
-const getActiveSession = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getActiveSession = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // Récupérer la session active
         const activeSession = yield prisma.session.findFirst({
-            where: {
-                Statut: true, // Vérifie si une session est active
-            },
+            where: { Statut: true },
         });
         if (!activeSession) {
-            return res.status(404).json({ error: "Aucune session active." });
+            res.status(404).json({ error: "Aucune session active." });
+            return;
         }
-        return res.status(200).json(activeSession); // Retourner la session active
+        res.status(200).json(activeSession);
     }
     catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: "Erreur lors de la récupération de la session active." });
+        console.error("Erreur lors de la récupération de la session active :", error);
+        next(error);
     }
 });
 exports.getActiveSession = getActiveSession;
+const getAllSessions = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const sessions = yield prisma.session.findMany({
+            orderBy: { DateDebut: "desc" }, // Trier par date de début décroissante
+        });
+        res.status(200).json(sessions);
+    }
+    catch (error) {
+        console.error("Error fetching sessions:", error);
+        res.status(500).json({ error: "Erreur lors de la récupération des sessions." });
+    }
+});
+exports.getAllSessions = getAllSessions;

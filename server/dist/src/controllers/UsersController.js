@@ -9,9 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUtilisateur = exports.updateUtilisateur = exports.createUtilisateur = exports.getAllUtilisateurs = void 0;
+exports.createManager = exports.getAllManagers = exports.deleteUtilisateur = exports.updateUtilisateur = exports.createUtilisateur = exports.getAllUtilisateurs = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
+// 1. Récupérer tous les utilisateurs
 const getAllUtilisateurs = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const utilisateurs = yield prisma.utilisateur.findMany();
@@ -23,11 +24,11 @@ const getAllUtilisateurs = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.getAllUtilisateurs = getAllUtilisateurs;
-// 2. Ajouter un utilisateur
+// 2. Créer un utilisateur (rôle à spécifier dans le corps de la requête)
 const createUtilisateur = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { Nom, Prenom, Email, MdP, Role } = req.body;
-        // Vérifiez que l'utilisateur n'existe pas déjà
+        // Vérifier que l'utilisateur n'existe pas déjà
         const existingUser = yield prisma.utilisateur.findUnique({
             where: { Email },
         });
@@ -53,11 +54,11 @@ const createUtilisateur = (req, res) => __awaiter(void 0, void 0, void 0, functi
 exports.createUtilisateur = createUtilisateur;
 // 3. Mettre à jour un utilisateur
 const updateUtilisateur = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { UtilisateurID } = req.params; // Assurez-vous d'avoir le paramètre ID dans l'URL
+    const { UtilisateurID } = req.params; // Assurez-vous d'avoir ce paramètre dans l'URL
     try {
         const { Nom, Prenom, Email, MdP, Role } = req.body;
         const updatedUser = yield prisma.utilisateur.update({
-            where: { UtilisateurID: parseInt(UtilisateurID) }, // Convertir en entier
+            where: { UtilisateurID: parseInt(UtilisateurID) },
             data: {
                 Nom,
                 Prenom,
@@ -76,10 +77,10 @@ const updateUtilisateur = (req, res) => __awaiter(void 0, void 0, void 0, functi
 exports.updateUtilisateur = updateUtilisateur;
 // 4. Supprimer un utilisateur
 const deleteUtilisateur = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { UtilisateurID } = req.params; // Assurez-vous d'avoir le paramètre ID dans l'URL
+    const { UtilisateurID } = req.params;
     try {
         yield prisma.utilisateur.delete({
-            where: { UtilisateurID: parseInt(UtilisateurID) }, // Convertir en entier
+            where: { UtilisateurID: parseInt(UtilisateurID) },
         });
         return res.status(204).send(); // No content
     }
@@ -89,3 +90,46 @@ const deleteUtilisateur = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.deleteUtilisateur = deleteUtilisateur;
+// 5. Récupérer tous les utilisateurs ayant le rôle "Manager"
+const getAllManagers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const managers = yield prisma.utilisateur.findMany({
+            where: { Role: 'Manager' },
+        });
+        return res.status(200).json(managers);
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Erreur lors de la récupération des managers." });
+    }
+});
+exports.getAllManagers = getAllManagers;
+// 6. Créer un utilisateur avec le rôle "Manager"
+//    Le rôle est fixé à "Manager" quelle que soit la valeur passée dans le corps de la requête.
+const createManager = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { Nom, Prenom, Email, MdP } = req.body;
+        // Vérifier qu'un utilisateur avec cet email n'existe pas déjà
+        const existingUser = yield prisma.utilisateur.findUnique({
+            where: { Email },
+        });
+        if (existingUser) {
+            return res.status(400).json({ error: "Un utilisateur avec cet email existe déjà." });
+        }
+        const newManager = yield prisma.utilisateur.create({
+            data: {
+                Nom,
+                Prenom,
+                Email,
+                MdP,
+                Role: 'Manager', // On fixe le rôle Manager
+            },
+        });
+        return res.status(201).json(newManager);
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Erreur lors de la création du manager." });
+    }
+});
+exports.createManager = createManager;

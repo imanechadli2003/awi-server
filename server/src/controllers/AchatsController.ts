@@ -4,6 +4,9 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export class AchatController {
+  static createAchat(arg0: string, createAchat: any) {
+      throw new Error('Method not implemented.');
+  }
  
 
   // Récupérer tous les achats

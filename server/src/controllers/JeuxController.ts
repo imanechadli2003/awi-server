@@ -82,7 +82,26 @@ export const mettreEnVente = async (req: Request, res: Response): Promise<void> 
     res.status(500).json({ error: "Erreur lors de la mise en vente du jeu." });
   }
 };
+// Mettre un jeu en vente (mise à jour de mise_en_vente à true)
+export const remettre = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
 
+  try {
+    const updatedJeu = await prisma.jeu.update({
+      where: {
+        JeuID: parseInt(id, 10),
+      },
+      data: {
+        mise_en_vente: false,
+      },
+    });
+
+    res.status(200).json(updatedJeu);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erreur lors de la mise en vente du jeu." });
+  }
+};
 
 
 // Supprimer un jeu

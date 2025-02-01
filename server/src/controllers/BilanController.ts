@@ -3,98 +3,64 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const getBilanVendeurSession = async (req: Request, res: Response): Promise<void> => {
+
+export const obtenirBilanVendeurSession = async (req: Request, res: Response): Promise<void> => {
+  const { vendeurId, sessionId } = req.params;
+
+  if (!vendeurId || !sessionId) {
+    res.status(400).json({ error: "vendeurId et sessionId sont requis." });
+    return;
+  }
+
   try {
-    const { id_vendeur, id_session } = req.params;
-
-    // Step 1: Calculate total_depots
-    const totalDepotsResult = await prisma.depotJeu.aggregate({
-      where: {
-        depot: {
-          VendeurID: Number(id_vendeur),
-          id_session: Number(id_session),
-        },
-      },
-      _sum: {
-        quantite_depose: true,
-      },
-    });
-    const totalDepots = totalDepotsResult._sum.quantite_depose || 0;
-
-    // Step 2: Calculate total_ventes
-    const totalVentesResult = await prisma.achatJeu.aggregate({
-      where: {
-        jeu: {
-          depot: {
-            VendeurID: Number(id_vendeur),
-            session: {
-              idSession: Number(id_session),
-            },
-          },
-        },
-      },
-      _sum: {
-        quantite_achete: true,
-      },
-    });
-    const totalVentes = totalVentesResult._sum.quantite_achete || 0;
-
-    // Step 3: Calculate total_stocks (remaining quantities in stock)
-    const totalStocksResult = await prisma.jeu.aggregate({
-      where: {
-        depot: {
-          VendeurID: Number(id_vendeur),
-          session: {
-            idSession: Number(id_session),
-          },
-        },
-      },
-      _sum: {
-        quantite_disponible: true,
-      },
-    });
-    const totalStocks = totalStocksResult._sum.quantite_disponible || 0;
-
-    // Step 4: Calculate total_gains and total_comissions
-    const venteDetails = await prisma.achatJeu.findMany({
-      where: {
-        jeu: {
-          depot: {
-            VendeurID: Number(id_vendeur),
-            session: {
-              idSession: Number(id_session),
-            },
-          },
-        },
-      },
-      include: {
-        achat: true,
-        jeu: true,
-      },
+    // Vérification de l'existence du vendeur
+    const vendeur = await prisma.vendeur.findUnique({
+      where: { VendeurID: parseInt(vendeurId) },
     });
 
-    let totalGains = 0;
-    let totalCommissions = 0;
-
-    for (const vente of venteDetails) {
-      const saleValue = vente.jeu.prix_unitaire * vente.quantite_achete;
-      const commission = vente.comission_vente * vente.quantite_achete;
-      totalGains += saleValue - commission;
-      totalCommissions += commission;
+    if (!vendeur) {
+      res.status(404).json({ error: "Vendeur non trouvé." });
+      return;
     }
 
-    // Respond with calculated metrics
+    // Vérification de l'existence de la session
+    const session = await prisma.session.findUnique({
+      where: { idSession: parseInt(sessionId) },
+    });
+
+    if (!session) {
+      res.status(404).json({ error: "Session non trouvée." });
+      return;
+    }
+
+    // Récupération du bilan
+    const bilan = await prisma.bilanVendeurSession.findUnique({
+      where: {
+        id_vendeur_id_session: {
+          id_vendeur: parseInt(vendeurId),
+          id_session: parseInt(sessionId),
+        },
+      },
+    });
+
+    if (!bilan) {
+      res.status(404).json({
+        error: "Aucun bilan trouvé pour ce vendeur et cette session.",
+      });
+      return;
+    }
+
     res.status(200).json({
-      id_vendeur,
-      id_session,
-      total_depots: totalDepots,
-      total_ventes: totalVentes,
-      total_stocks: totalStocks,
-      total_gains: totalGains,
-      total_comissions: totalCommissions,
+      BilanVendeurSession: {
+        total_depots: bilan.total_depots,
+        total_ventes: bilan.total_ventes,
+        total_stocks: bilan.total_stocks,
+        total_gains: bilan.total_gains,
+        total_comissions: bilan.total_comissions,
+      },
     });
   } catch (error) {
-    console.error("Error fetching bilan:", error);
-    res.status(500).json({ error: "Erreur lors de la récupération du bilan du vendeur." });
+    console.error("Erreur lors de la récupération du bilan:", error);
+    res.status(500).json({ error: "Erreur interne du serveur." });
   }
 };

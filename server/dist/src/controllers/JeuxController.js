@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteJeu = exports.mettreEnVente = exports.getJeuById = exports.getAllJeuxEnVente = exports.getAllJeux = void 0;
+exports.deleteJeu = exports.remettre = exports.mettreEnVente = exports.getJeuById = exports.getAllJeuxEnVente = exports.getAllJeux = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 // Obtenir tous les jeux
@@ -91,6 +91,26 @@ const mettreEnVente = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.mettreEnVente = mettreEnVente;
+// Mettre un jeu en vente (mise à jour de mise_en_vente à true)
+const remettre = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    try {
+        const updatedJeu = yield prisma.jeu.update({
+            where: {
+                JeuID: parseInt(id, 10),
+            },
+            data: {
+                mise_en_vente: false,
+            },
+        });
+        res.status(200).json(updatedJeu);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Erreur lors de la mise en vente du jeu." });
+    }
+});
+exports.remettre = remettre;
 // Supprimer un jeu
 const deleteJeu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;

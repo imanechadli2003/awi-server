@@ -26,14 +26,12 @@ const getJeux = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.getJeux = getJeux;
 const creerDepot = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { vendeurId, jeux } = req.body;
-    // Vérification des données reçues
     if (!vendeurId || !jeux || jeux.length === 0) {
         console.log("Erreur : Vendeur ou jeux manquants");
         res.status(400).json({ error: "Vendeur et jeux sont nécessaires." });
         return;
     }
     try {
-        // Vérifier qu'il existe une session active
         const sessionActive = yield prisma.session.findFirst({
             where: { Statut: true },
         });
@@ -42,48 +40,34 @@ const creerDepot = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             res.status(400).json({ error: "Aucune session active en cours." });
             return;
         }
-        console.log("Session active trouvée:", sessionActive);
-        // Vérifier si le vendeur existe, sinon créer un nouveau vendeur
         let vendeur = yield prisma.vendeur.findUnique({
             where: { VendeurID: vendeurId },
         });
         if (!vendeur) {
             console.log(`Le vendeur avec ID ${vendeurId} n'existe pas, création d'un nouveau vendeur.`);
         }
-        else {
-            console.log(`Vendeur trouvé: ${vendeur.VendeurID}`);
-        }
-        // Initialiser la commission totale pour le dépôt
         let comissionDepotTotal = 0;
-        // Créer un nouveau dépôt sans commission totale pour le moment
+        let totalJeuxDeposes = 0; // Total des quantités déposées
         const nouveauDepot = yield prisma.depot.create({
             data: {
-                VendeurID: vendeur ? vendeur.VendeurID : vendeurId, // Utilisation du vendeur existant ou création d'un nouveau
+                VendeurID: vendeur ? vendeur.VendeurID : vendeurId,
                 date_depot: new Date(),
                 id_session: sessionActive.idSession,
                 comission_depot_total: 0,
             },
         });
-        console.log(`Nouveau dépôt créé avec ID ${nouveauDepot.ID_depot}`);
-        // Parcourir chaque jeu à déposer
         for (const jeu of jeux) {
-            console.log(`Traitement du jeu: ${jeu.nomJeu} - Quantité: ${jeu.quantite_depose}`);
-            // Vérification si un jeu avec le même JeuRef_id existe déjà dans le dépôt
             const jeuExistant = yield prisma.jeu.findFirst({
                 where: {
                     depot_ID: nouveauDepot.ID_depot,
-                    JeuRef_id: jeu.nomJeu, // Vérification avec le JeuRef_id
+                    JeuRef_id: jeu.nomJeu,
                 },
             });
             if (jeuExistant) {
-                // Si un jeu existe déjà, le supprimer avant de créer un nouveau jeu
-                console.log(`Jeu avec JeuRef_id ${jeu.nomJeu} déjà existant, suppression du jeu.`);
                 yield prisma.jeu.delete({
                     where: { JeuID: jeuExistant.JeuID },
                 });
-                console.log(`Jeu ${jeu.nomJeu} supprimé du dépôt ${nouveauDepot.ID_depot}`);
             }
-            // Création du nouveau jeu dans le dépôt
             const nouveauJeu = yield prisma.jeu.create({
                 data: {
                     JeuRef_id: jeu.nomJeu,
@@ -93,14 +77,9 @@ const creerDepot = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                     quantite_disponible: jeu.quantite_depose,
                 },
             });
-            console.log(`Jeu créé avec succès: ${nouveauJeu.JeuRef_id} - Quantité déposée: ${jeu.quantite_depose}`);
-            // Calculer la commission pour ce jeu spécifique
             const commissionJeu = sessionActive.pourc_frais_depot * jeu.prixUnitaire;
-            console.log(`Commission pour le jeu ${jeu.nomJeu}: ${commissionJeu}`);
-            // Ajouter cette commission au total du dépôt
             comissionDepotTotal += commissionJeu * jeu.quantite_depose;
-            console.log(`Commission totale mise à jour: ${comissionDepotTotal}`);
-            // Créer l'entrée dans `DepotJeu` pour associer le jeu au dépôt
+            totalJeuxDeposes += jeu.quantite_depose; // Ajout de la quantité déposée
             yield prisma.depotJeu.create({
                 data: {
                     depot_ID: nouveauDepot.ID_depot,
@@ -109,15 +88,35 @@ const creerDepot = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                     comission_depot: commissionJeu,
                 },
             });
-            console.log(`Jeu ${jeu.nomJeu} associé au dépôt`);
         }
-        // Mettre à jour la commission totale du dépôt
         yield prisma.depot.update({
             where: { ID_depot: nouveauDepot.ID_depot },
             data: { comission_depot_total: comissionDepotTotal },
         });
-        console.log(`Commission totale du dépôt mise à jour: ${comissionDepotTotal}`);
-        // Réponse de succès
+        // Mise à jour ou création de BilanVendeurSession
+        const bilan = yield prisma.bilanVendeurSession.upsert({
+            where: {
+                id_vendeur_id_session: {
+                    id_vendeur: vendeurId,
+                    id_session: sessionActive.idSession,
+                },
+            },
+            update: {
+                total_depots: { increment: totalJeuxDeposes },
+                total_stocks: { increment: totalJeuxDeposes },
+                total_comissions: { increment: comissionDepotTotal },
+            },
+            create: {
+                id_vendeur: vendeurId,
+                id_session: sessionActive.idSession,
+                total_depots: totalJeuxDeposes,
+                total_stocks: totalJeuxDeposes,
+                total_ventes: 0,
+                total_gains: 0,
+                total_comissions: comissionDepotTotal,
+            },
+        });
+        console.log(`Bilan vendeur-session mis à jour:`, bilan);
         res.status(201).json({
             message: "Dépôt et jeux associés créés avec succès",
             depot: nouveauDepot,
