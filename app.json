@@ -1,11 +1,12 @@
 {
-  "healthchecks": [
-    {
-      "type": "http",
-      "path": "/health",
-      "interval": 10,
-      "timeout": 3
-    }
-  ]
+  "healthchecks": {
+    "web": [
+      {
+        "type": "http",
+        "path": "/health",
+        "interval": 10,
+        "timeout": 3
+      }
+    ]
+  }
 }
-
