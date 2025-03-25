@@ -1,9 +1,9 @@
 {
   "healthchecks": {
-    "web": {
-      "path": "/health",
-      "interval": 10,
-      "timeout": 3
-    }
+    "url": "/health",
+    "interval": 10,
+    "timeout": 3
   }
 }
+
+
