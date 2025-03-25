@@ -1,0 +1,62 @@
+[
+  {
+    "JeuID": 1,
+    "JeuRef_id": 1,
+    "depot_ID": 1,
+    "prix_unitaire": 49.99,
+    "mise_en_vente": true,
+    "quantite_disponible": 100
+  },
+  {
+    "JeuID": 2,
+    "JeuRef_id": 2,
+    "depot_ID": 2,
+    "prix_unitaire": 29.99,
+    "mise_en_vente": false,
+    "quantite_disponible": 50
+
+  },
+  
+    {
+      "JeuID": 3,
+      "JeuRef_id": 1,
+      "depot_ID": 3,
+      "prix_unitaire": 59.99,
+      "mise_en_vente": true,
+      "quantite_disponible": 75
+    },
+    {
+      "JeuID": 4,
+      "JeuRef_id": 3,
+      "depot_ID": 4,
+      "prix_unitaire": 39.99,
+      "mise_en_vente": true,
+      "quantite_disponible": 120
+    },
+    {
+      "JeuID": 5,
+      "JeuRef_id": 4,
+      "depot_ID": 1,
+      "prix_unitaire": 19.99,
+      "mise_en_vente": false,
+      "quantite_disponible": 0
+    },
+    {
+      "JeuID": 6,
+      "JeuRef_id": 2,
+      "depot_ID": 2,
+      "prix_unitaire": 34.99,
+      "mise_en_vente": true,
+      "quantite_disponible": 30
+    },
+    {
+      "JeuID": 7,
+      "JeuRef_id": 5,
+      "depot_ID": 5,
+      "prix_unitaire": 24.99,
+      "mise_en_vente": true,
+      "quantite_disponible": 60
+    }
+  
+  
+]

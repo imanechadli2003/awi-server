@@ -1,0 +1,14 @@
+[
+  {
+    "VendeurID": 1,
+    "Nom": "Vendeur A",
+    "Email": "vendeurA@example.com",
+    "Telephone": "0123456789"
+  },
+  {
+    "VendeurID": 2,
+    "Nom": "Vendeur B",
+    "Email": "vendeurB@example.com",
+    "Telephone": "0987654321"
+  }
+]

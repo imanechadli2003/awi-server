@@ -1,0 +1,11 @@
+[
+  {
+    "id_vendeur": 1,
+    "id_session": 1,
+    "total_depots": 5,
+    "total_ventes": 3,
+    "total_stocks": 15,
+    "total_gains": 150.0,
+    "total_comissions": 10.0
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "depot_ID": 1,
+    "JeuID": 1,
+    "quantite_depose": 10,
+    "comission_depot": 2.5
+  },
+  {
+    "depot_ID": 2,
+    "JeuID": 2,
+    "quantite_depose": 5,
+    "comission_depot": 3.0
+  }
+]

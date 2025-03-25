@@ -1,0 +1,14 @@
+[
+  {
+    "JeuRef_id": 1,
+    "Nom": "Jeu Aventure",
+    "Editeur": "Editeur A",
+    "Description": "Un jeu d'aventure captivant."
+  },
+  {
+    "JeuRef_id": 2,
+    "Nom": "Jeu Puzzle",
+    "Editeur": "Editeur B",
+    "Description": "Un jeu de puzzle complexe."
+  }
+]

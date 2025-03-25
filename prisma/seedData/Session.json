@@ -1,0 +1,11 @@
+[
+  {
+    "idSession": 1,
+    "NomSession": "Session Printemps",
+    "DateDebut": "2024-01-01T00:00:00Z",
+    "DateFin": "2024-06-30T00:00:00Z",
+    "pourc_frais_depot": 5.0,
+    "pourc_frais_vente": 10.0,
+    "Statut": true
+  }
+]

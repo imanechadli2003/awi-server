@@ -1,0 +1,125 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model JeuxMarque {
+  JeuRef_id   Int    @id
+  Nom         String
+  Editeur     String
+  Description String
+  jeuxDepot   Jeu[]  @relation("JeuxMarque_Jeu")
+}
+
+model Jeu {
+  JeuID               Int        @id @default(autoincrement())
+  JeuRef_id           Int
+  depot_ID            Int
+  prix_unitaire       Float
+  mise_en_vente       Boolean
+  quantite_disponible Int
+  achat_jeux          AchatJeu[]
+  depot_jeux          DepotJeu[]
+  jeuxMarque          JeuxMarque @relation("JeuxMarque_Jeu", fields: [JeuRef_id], references: [JeuRef_id])
+  depot               Depot      @relation(fields: [depot_ID], references: [ID_depot])
+}
+
+model Depot {
+  ID_depot              Int        @id @default(autoincrement())
+  VendeurID             Int
+  date_depot            DateTime
+  id_session            Int
+  comission_depot_total Float
+  vendeur               Vendeur    @relation(fields: [VendeurID], references: [VendeurID])
+  session               Session    @relation(fields: [id_session], references: [idSession])
+  depot_jeux            DepotJeu[]
+  jeux                  Jeu[]
+}
+
+model Vendeur {
+  VendeurID           Int                   @id @default(autoincrement())
+  Nom                 String
+  Email               String
+  Telephone           String
+  BilanVendeurSession BilanVendeurSession[]
+  depots              Depot[]
+}
+
+model DepotJeu {
+  depot_ID        Int
+  JeuID           Int
+  quantite_depose Int
+  comission_depot Float
+  jeu             Jeu   @relation(fields: [JeuID], references: [JeuID])
+  depot           Depot @relation(fields: [depot_ID], references: [ID_depot])
+
+  @@id([depot_ID, JeuID])
+}
+
+model Achat {
+  AchatID               Int        @id @default(autoincrement())
+  Total_paye            Float
+  id_session            Int
+  DateAchat             DateTime
+  comission_vente_total Float
+  session               Session    @relation(fields: [id_session], references: [idSession])
+  achat_jeux            AchatJeu[]
+
+  @@index([id_session])
+}
+
+model AchatJeu {
+  AchatID         Int
+  JeuID           Int
+  comission_vente Float
+  quantite_achete Int
+  achat           Achat @relation(fields: [AchatID], references: [AchatID])
+  jeu             Jeu   @relation(fields: [JeuID], references: [JeuID])
+
+  @@id([AchatID, JeuID])
+}
+
+model Session {
+  idSession            Int                   @id @default(autoincrement())
+  NomSession           String
+  DateDebut            DateTime
+  DateFin              DateTime?
+  pourc_frais_depot    Float
+  pourc_frais_vente    Float
+  Statut               Boolean
+  achats               Achat[]
+  bilanVendeurSessions BilanVendeurSession[]
+  depots               Depot[]
+}
+
+model Utilisateur {
+  UtilisateurID Int    @id @default(autoincrement())
+  Nom           String
+  Prenom        String
+  Email         String @unique
+  MdP           String
+  Role          Role
+}
+
+model BilanVendeurSession {
+  id_vendeur       Int
+  id_session       Int
+  total_depots     Int
+  total_ventes     Int
+  total_stocks     Int
+  total_gains      Float
+  total_comissions Float
+  session          Session @relation(fields: [id_session], references: [idSession])
+  vendeur          Vendeur @relation(fields: [id_vendeur], references: [VendeurID])
+
+  @@id([id_vendeur, id_session])
+}
+
+enum Role {
+  Manager
+  Admin
+}
