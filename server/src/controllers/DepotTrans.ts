@@ -60,7 +60,7 @@ export const creerDepot = async (req: Request, res: Response): Promise<void> => 
       });
 
       // Calculer la commission pour ce jeu spécifique
-      const commissionJeu = sessionActive.pourc_frais_depot * jeu.prixUnitaire ;
+      const commissionJeu = (sessionActive.pourc_frais_depot/100) * jeu.prixUnitaire ;
 
       // Ajouter cette commission au total du dépôt
       comissionDepotTotal += commissionJeu* jeu.quantiteDepose;
